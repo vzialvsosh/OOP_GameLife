@@ -19,6 +19,20 @@ public class Terrain
     FillField();
   }
 
+  public Terrain GetCopy()
+  {
+    Terrain terrain = new Terrain(Width, Height);
+    for (int i = 0; i < Width; ++i)
+    {
+      for (int j = 0; j < Height; ++j)
+      {
+        if (Field[i, j].Alive) terrain.Field[i, j] = new Cell(true);
+        else terrain.Field[i, j] = new Cell(false);
+      }
+    }
+    return terrain;
+  }
+
   private void FillField()
   {
     Random rnd = new Random();
@@ -27,6 +41,26 @@ public class Terrain
       for (int j = 0; j < Height; ++j)
       {
         Field[i, j] = new Cell(rnd.NextDouble() < _possibitity);
+      }
+    }
+    for (int i = 0; i < 2; ++i)
+    {
+      for (int j = 0; j < 2; ++j)
+      {
+        Field[i, j] = new Cell(true);
+      }
+    }
+  }
+
+  public void FillByArray(bool[,] array)
+  {
+    if (array.GetLength(0) != Width) throw new Exception("Array does not fit the terrain");
+    if (array.GetLength(1) != Height) throw new Exception("Array does not fit the terrain");
+    for (int i = 0; i < Width; ++i)
+    {
+      for (int j = 0; j < Height; ++j)
+      {
+        Field[i, j] = new Cell(array[i, j]);
       }
     }
   }
@@ -76,7 +110,7 @@ public class Terrain
     return cnt;
   }
 
-  private bool IsOnField(int i, int j)
+  public bool IsOnField(int i, int j)
   {
     return i >= 0 && i < Width && j >= 0 && j < Height;
   }
