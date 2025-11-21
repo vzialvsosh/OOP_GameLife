@@ -6,7 +6,8 @@ public class LifeFrom : Form
   public LifeFrom(Terrain terrain)
   {
     _terrain = terrain;
-    Size = new Size(900, 600);
+    Location = new Point(100, 100);
+    Size = new Size(700, 700);
     Text = "LifeForm";
     Paint += DrawTerrain;
   }
@@ -14,13 +15,6 @@ public class LifeFrom : Form
   private void DrawTerrain(object? sender, PaintEventArgs e)
   {
     e.Graphics.DrawImage(Render(), 0, 0);
-    // for (int i = 0; i < _terrain.Height; ++i)
-    // {
-    //   for (int j = 0; j < _terrain.Width; ++j)
-    //   {
-    //     DrawCell(i, j, e.Graphics);
-    //   }
-    // }
   }
 
   private Bitmap Render()

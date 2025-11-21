@@ -1,5 +1,5 @@
 public static class Scanner {
-  private static bool[,] PatterBlock = {
+  private static bool[,] PatternBlock = {
     { true, true},
     { true, true}
   };
@@ -76,20 +76,49 @@ public static class Scanner {
 
   private static bool MatchesBlock(bool[,] component, int i, int j)
   {
+    Console.WriteLine($"{i}, {j}");
     int deltaI = i - RootBlock[0];
     int deltaJ = j - RootBlock[1];
     if (deltaI < 0) return false;
     if (deltaJ < 0) return false;
-    if (deltaI + PatterBlock.GetLength(0) > component.GetLength(0)) return false;
-    if (deltaJ + PatterBlock.GetLength(1) > component.GetLength(1)) return false;
+    if (deltaI + PatternBlock.GetLength(0) > component.GetLength(0)) return false;
+    if (deltaJ + PatternBlock.GetLength(1) > component.GetLength(1)) return false;
 
-    for (int x = 0; x < PatterBlock.GetLength(0); ++x)
+    for (int x = 0; x < PatternBlock.GetLength(0); ++x)
     {
-      for (int y = 0; y < PatterBlock.GetLength(1); ++y)
+      for (int y = 0; y < PatternBlock.GetLength(1); ++y)
       {
-        if (!component[x + deltaI, y + deltaJ] == PatterBlock[x, y]) return false;
+        if (!component[x + deltaI, y + deltaJ] == PatternBlock[x, y]) return false;
       }
+    }
+    return CheckSidesBlock(component, deltaI, deltaJ);
+  }
+  
+  private static bool CheckSidesBlock(bool[,] component, int deltaI, int deltaJ)
+  {
+    for (int x = deltaI - 1; x <= deltaI + PatternBlock.GetLength(0); ++x)
+    {
+      if (IsOnComponent(component, x, deltaJ - 1) && component[x, deltaJ - 1]) return false;
+    }
+    for (int x = deltaI - 1; x <= deltaI + PatternBlock.GetLength(0); ++x)
+    {
+      if (IsOnComponent(component, x, deltaJ + PatternBlock.GetLength(1)) &&
+        component[x, deltaJ + PatternBlock.GetLength(1)]) return false;
+    }
+
+    for (int y = deltaJ - 1; y <= deltaJ + PatternBlock.GetLength(1); ++y)
+    {
+      if (IsOnComponent(component, deltaI - 1, y) && component[deltaI - 1, y]) return false;
+    }
+    for (int y = deltaJ - 1; y <= deltaJ + PatternBlock.GetLength(1); ++y)
+    {
+      if (IsOnComponent(component, deltaI + PatternBlock.GetLength(0), y) &&
+        component[deltaI + PatternBlock.GetLength(0), y]) return false;
     }
     return true;
   }
+
+  private static bool IsOnComponent(bool[,] component, int i, int j)
+  => i >= 0 && i < component.GetLength(0) && j >= 0 && j < component.GetLength(1);
+
 }

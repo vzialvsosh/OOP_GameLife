@@ -43,13 +43,13 @@ public class Terrain
         Field[i, j] = new Cell(rnd.NextDouble() < _possibitity);
       }
     }
-    for (int i = 0; i < 2; ++i)
-    {
-      for (int j = 0; j < 2; ++j)
-      {
-        Field[i, j] = new Cell(true);
-      }
-    }
+    // for (int i = 0; i < 2; ++i)
+    // {
+    //   for (int j = 0; j < 2; ++j)
+    //   {
+    //     Field[i, j] = new Cell(true);
+    //   }
+    // }
   }
 
   public void FillByArray(bool[,] array)
@@ -110,8 +110,6 @@ public class Terrain
     return cnt;
   }
 
-  public bool IsOnField(int i, int j)
-  {
-    return i >= 0 && i < Width && j >= 0 && j < Height;
-  }
+  public bool IsOnField(int i, int j) => i >= 0 && i < Width && j >= 0 && j < Height;
+  
 }

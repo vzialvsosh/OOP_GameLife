@@ -2,33 +2,33 @@ public class GameLife
 {
   private Terrain _terrain;
   private LifeFrom _lifeForm;
-  private LifeFrom _favoritesForm;
+  private FavoritesForm _favoritesForm;
   private System.Windows.Forms.Timer _timer;
 
   public GameLife()
   {
-    _terrain = new Terrain(10, 10);
+    _terrain = new Terrain(20, 20);
     _lifeForm = new LifeFrom(_terrain);
-    _favoritesForm = new LifeFrom(Scanner.Scan(_terrain));
-
-    _timer = new System.Windows.Forms.Timer();
-    _timer.Interval = 3000;
-    _timer.Tick += TimerTick;
-    _timer.Start();
+    _favoritesForm = new FavoritesForm(Scanner.Scan(_terrain));
   }
 
   public void Run()
   {
-    // _lifeForm.Show();
+    _timer = new System.Windows.Forms.Timer();
+    _timer.Interval = 500;
+    _timer.Tick += TimerTick;
+    _timer.Start();
+
+    _lifeForm.Show();
     _favoritesForm.Show();
-    Application.Run(_lifeForm);
+    Application.Run();
     // Application.Run(_favoritesForm);
   }
 
   private void TimerTick(object? sender, EventArgs e)
   {
     _terrain.UpdateField();
-    _favoritesForm = new LifeFrom(Scanner.Scan(_terrain));
+    _favoritesForm._terrain = Scanner.Scan(_terrain);
     _lifeForm.Invalidate();
     _favoritesForm.Invalidate();
   }
