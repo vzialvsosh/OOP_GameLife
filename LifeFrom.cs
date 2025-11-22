@@ -1,13 +1,14 @@
 public class LifeFrom : Form
 {
   private Terrain _terrain;
-  private int _cellSize = 25;
+  private int _cellSize = 10;
 
   public LifeFrom(Terrain terrain)
   {
     _terrain = terrain;
-    Location = new Point(100, 100);
-    Size = new Size(700, 700);
+    StartPosition = FormStartPosition.Manual;
+    Location = new Point(20, 100);
+    Size = new Size(600, 600);
     Text = "LifeForm";
     Paint += DrawTerrain;
   }

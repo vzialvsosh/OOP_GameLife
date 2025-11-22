@@ -1,10 +1,38 @@
-public static class Scanner {
-  private static bool[,] PatternBlock = {
-    { true, true},
-    { true, true}
+public static class Scanner
+{
+  private enum Pattern
+  {
+    Block,
+    Blinker1,
+    Blinker2,
+    // BeeHive,
+    // Glider,
+
+  }
+  private static Dictionary<Pattern, bool[,]> Patterns = new Dictionary<Pattern, bool[,]>
+  {
+    [Pattern.Block] = new bool[,] {
+      { true, true },
+      { true, true }
+    },
+    [Pattern.Blinker1] = new bool[,]
+    {
+      { true, true, true }
+    },
+    [Pattern.Blinker2] = new bool[,]
+    {
+      { true },
+      { true },
+      { true }
+    }
   };
-  private static int[] RootBlock = { 0, 0};
- 
+  private static Dictionary<Pattern, int[]> Roots = new Dictionary<Pattern, int[]>
+  {
+    [Pattern.Block] = new int[] { 0, 0 },
+    [Pattern.Blinker1] = new int[] { 0, 0 },
+    [Pattern.Blinker2] = new int[] { 0, 0 },
+  };
+
   public static Terrain Scan(Terrain terrain)
   {
     Terrain newTerrain = terrain.GetCopy();
@@ -71,52 +99,100 @@ public static class Scanner {
 
   private static bool MatchesPattern(bool[,] component, int i, int j)
   {
-    return MatchesBlock(component, i, j);
+    foreach (Pattern pattern in Enum.GetValues<Pattern>())
+    {
+      if (Matches(pattern, component, i, j)) return true;
+    }
+    return false;
   }
 
-  private static bool MatchesBlock(bool[,] component, int i, int j)
+  private static bool Matches(Pattern pattern, bool[,] component, int i, int j)
   {
-    Console.WriteLine($"{i}, {j}");
-    int deltaI = i - RootBlock[0];
-    int deltaJ = j - RootBlock[1];
+    // Console.WriteLine($"{i}, {j}");
+    int deltaI = i - Roots[pattern][0];
+    int deltaJ = j - Roots[pattern][1];
     if (deltaI < 0) return false;
     if (deltaJ < 0) return false;
-    if (deltaI + PatternBlock.GetLength(0) > component.GetLength(0)) return false;
-    if (deltaJ + PatternBlock.GetLength(1) > component.GetLength(1)) return false;
+    if (deltaI + Patterns[pattern].GetLength(0) > component.GetLength(0)) return false;
+    if (deltaJ + Patterns[pattern].GetLength(1) > component.GetLength(1)) return false;
 
-    for (int x = 0; x < PatternBlock.GetLength(0); ++x)
+    for (int x = 0; x < Patterns[pattern].GetLength(0); ++x)
     {
-      for (int y = 0; y < PatternBlock.GetLength(1); ++y)
+      for (int y = 0; y < Patterns[pattern].GetLength(1); ++y)
       {
-        if (!component[x + deltaI, y + deltaJ] == PatternBlock[x, y]) return false;
+        if (!component[x + deltaI, y + deltaJ] == Patterns[pattern][x, y]) return false;
       }
     }
-    return CheckSidesBlock(component, deltaI, deltaJ);
+    return CheckSides(pattern, component, deltaI, deltaJ);
   }
-  
-  private static bool CheckSidesBlock(bool[,] component, int deltaI, int deltaJ)
+
+  private static bool CheckSides(Pattern pattern, bool[,] component, int deltaI, int deltaJ)
   {
-    for (int x = deltaI - 1; x <= deltaI + PatternBlock.GetLength(0); ++x)
+    for (int x = deltaI - 1; x <= deltaI + Patterns[pattern].GetLength(0); ++x)
     {
       if (IsOnComponent(component, x, deltaJ - 1) && component[x, deltaJ - 1]) return false;
     }
-    for (int x = deltaI - 1; x <= deltaI + PatternBlock.GetLength(0); ++x)
+    for (int x = deltaI - 1; x <= deltaI + Patterns[pattern].GetLength(0); ++x)
     {
-      if (IsOnComponent(component, x, deltaJ + PatternBlock.GetLength(1)) &&
-        component[x, deltaJ + PatternBlock.GetLength(1)]) return false;
+      if (IsOnComponent(component, x, deltaJ + Patterns[pattern].GetLength(1)) &&
+        component[x, deltaJ + Patterns[pattern].GetLength(1)]) return false;
     }
 
-    for (int y = deltaJ - 1; y <= deltaJ + PatternBlock.GetLength(1); ++y)
+    for (int y = deltaJ - 1; y <= deltaJ + Patterns[pattern].GetLength(1); ++y)
     {
       if (IsOnComponent(component, deltaI - 1, y) && component[deltaI - 1, y]) return false;
     }
-    for (int y = deltaJ - 1; y <= deltaJ + PatternBlock.GetLength(1); ++y)
+    for (int y = deltaJ - 1; y <= deltaJ + Patterns[pattern].GetLength(1); ++y)
     {
-      if (IsOnComponent(component, deltaI + PatternBlock.GetLength(0), y) &&
-        component[deltaI + PatternBlock.GetLength(0), y]) return false;
+      if (IsOnComponent(component, deltaI + Patterns[pattern].GetLength(0), y) &&
+        component[deltaI + Patterns[pattern].GetLength(0), y]) return false;
     }
     return true;
   }
+
+  // private static bool MatchesBlock(bool[,] component, int i, int j)
+  // {
+  //   Console.WriteLine($"{i}, {j}");
+  //   int deltaI = i - RootBlock[0];
+  //   int deltaJ = j - RootBlock[1];
+  //   if (deltaI < 0) return false;
+  //   if (deltaJ < 0) return false;
+  //   if (deltaI + PatternBlock.GetLength(0) > component.GetLength(0)) return false;
+  //   if (deltaJ + PatternBlock.GetLength(1) > component.GetLength(1)) return false;
+
+  //   for (int x = 0; x < PatternBlock.GetLength(0); ++x)
+  //   {
+  //     for (int y = 0; y < PatternBlock.GetLength(1); ++y)
+  //     {
+  //       if (!component[x + deltaI, y + deltaJ] == PatternBlock[x, y]) return false;
+  //     }
+  //   }
+  //   return CheckSidesBlock(component, deltaI, deltaJ);
+  // }
+
+  // private static bool CheckSidesBlock(bool[,] component, int deltaI, int deltaJ)
+  // {
+  //   for (int x = deltaI - 1; x <= deltaI + PatternBlock.GetLength(0); ++x)
+  //   {
+  //     if (IsOnComponent(component, x, deltaJ - 1) && component[x, deltaJ - 1]) return false;
+  //   }
+  //   for (int x = deltaI - 1; x <= deltaI + PatternBlock.GetLength(0); ++x)
+  //   {
+  //     if (IsOnComponent(component, x, deltaJ + PatternBlock.GetLength(1)) &&
+  //       component[x, deltaJ + PatternBlock.GetLength(1)]) return false;
+  //   }
+
+  //   for (int y = deltaJ - 1; y <= deltaJ + PatternBlock.GetLength(1); ++y)
+  //   {
+  //     if (IsOnComponent(component, deltaI - 1, y) && component[deltaI - 1, y]) return false;
+  //   }
+  //   for (int y = deltaJ - 1; y <= deltaJ + PatternBlock.GetLength(1); ++y)
+  //   {
+  //     if (IsOnComponent(component, deltaI + PatternBlock.GetLength(0), y) &&
+  //       component[deltaI + PatternBlock.GetLength(0), y]) return false;
+  //   }
+  //   return true;
+  // }
 
   private static bool IsOnComponent(bool[,] component, int i, int j)
   => i >= 0 && i < component.GetLength(0) && j >= 0 && j < component.GetLength(1);

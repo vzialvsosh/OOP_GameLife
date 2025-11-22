@@ -1,13 +1,14 @@
 public class FavoritesForm : Form
 {
   public Terrain _terrain;
-  private int _cellSize = 25;
+  private int _cellSize = 10;
 
   public FavoritesForm(Terrain terrain)
   {
     _terrain = terrain;
-    Location = new Point(1000, 100);
-    Size = new Size(700, 700);
+    StartPosition = FormStartPosition.Manual;
+    Location = new Point(620, 100);
+    Size = new Size(600, 600);
     Text = "FavoritesForm";
     Paint += DrawTerrain;
   }

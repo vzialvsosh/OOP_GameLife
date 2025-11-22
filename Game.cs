@@ -7,7 +7,7 @@ public class GameLife
 
   public GameLife()
   {
-    _terrain = new Terrain(20, 20);
+    _terrain = new Terrain(50, 50);
     _lifeForm = new LifeFrom(_terrain);
     _favoritesForm = new FavoritesForm(Scanner.Scan(_terrain));
   }
@@ -22,7 +22,6 @@ public class GameLife
     _lifeForm.Show();
     _favoritesForm.Show();
     Application.Run();
-    // Application.Run(_favoritesForm);
   }
 
   private void TimerTick(object? sender, EventArgs e)
