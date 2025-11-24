@@ -5,9 +5,9 @@ public static class Scanner
     Block,
     Blinker1,
     Blinker2,
-    // BeeHive,
+    BeeHive1,
+    BeeHive2
     // Glider,
-
   }
   private static Dictionary<Pattern, bool[,]> Patterns = new Dictionary<Pattern, bool[,]>
   {
@@ -24,20 +24,36 @@ public static class Scanner
       { true },
       { true },
       { true }
+    },
+    [Pattern.BeeHive1] = new bool[,]
+    {
+      { false, true, false },
+      { true, false, true },
+      { true, false, true },
+      { false, true, false }
+    },
+    [Pattern.BeeHive2] = new bool[,]
+    {
+      { false, true, true, false },
+      { true, false, false, true },
+      { false, true, true, false }
     }
   };
+
   private static Dictionary<Pattern, int[]> Roots = new Dictionary<Pattern, int[]>
   {
     [Pattern.Block] = new int[] { 0, 0 },
     [Pattern.Blinker1] = new int[] { 0, 0 },
     [Pattern.Blinker2] = new int[] { 0, 0 },
+    [Pattern.BeeHive1] = new int[] { 0, 1 },
+    [Pattern.BeeHive2] = new int[] { 0, 1 }
   };
 
-  public static Terrain Scan(Terrain terrain)
+  public static Terrain ScanTo(Terrain terrain, Terrain outputTerrain)
   {
-    Terrain newTerrain = terrain.GetCopy();
-    newTerrain.FillByArray(GetComponents(newTerrain));
-    return newTerrain;
+    terrain.CopyTo(outputTerrain);
+    outputTerrain.FillByArray(GetComponents(outputTerrain));
+    return outputTerrain;
   }
 
   public static bool[,] GetComponents(Terrain terrain)

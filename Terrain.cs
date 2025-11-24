@@ -33,6 +33,19 @@ public class Terrain
     return terrain;
   }
 
+  public void CopyTo(Terrain terrain)
+  {
+    if (terrain.Width != Width || terrain.Height != Height) throw new InvalidOperationException("Width or heigth of terrain to copy doesn't fit the origin ones");
+    for (int i = 0; i < Width; ++i)
+    {
+      for (int j = 0; j < Height; ++j)
+      {
+        if (Field[i, j].Alive) terrain.Field[i, j] = new Cell(true);
+        else terrain.Field[i, j] = new Cell(false);
+      }
+    }
+  }
+
   private void FillField()
   {
     Random rnd = new Random();
@@ -43,13 +56,6 @@ public class Terrain
         Field[i, j] = new Cell(rnd.NextDouble() < _possibitity);
       }
     }
-    // for (int i = 0; i < 2; ++i)
-    // {
-    //   for (int j = 0; j < 2; ++j)
-    //   {
-    //     Field[i, j] = new Cell(true);
-    //   }
-    // }
   }
 
   public void FillByArray(bool[,] array)

@@ -1,15 +1,18 @@
 public class GameLife
 {
-  private Terrain _terrain;
+  private Terrain _lifeFormTerrain;
+  private Terrain _favoritesFormTerrain;
   private LifeFrom _lifeForm;
   private FavoritesForm _favoritesForm;
   private System.Windows.Forms.Timer _timer;
 
   public GameLife()
   {
-    _terrain = new Terrain(50, 50);
-    _lifeForm = new LifeFrom(_terrain);
-    _favoritesForm = new FavoritesForm(Scanner.Scan(_terrain));
+    _lifeFormTerrain = new Terrain(50, 50);
+    _lifeForm = new LifeFrom(_lifeFormTerrain);
+    _favoritesFormTerrain = _lifeFormTerrain.GetCopy();
+    _favoritesForm = new FavoritesForm(_favoritesFormTerrain);
+    Scanner.ScanTo(_lifeFormTerrain, _favoritesFormTerrain);
   }
 
   public void Run()
@@ -26,8 +29,8 @@ public class GameLife
 
   private void TimerTick(object? sender, EventArgs e)
   {
-    _terrain.UpdateField();
-    _favoritesForm._terrain = Scanner.Scan(_terrain);
+    _lifeFormTerrain.UpdateField();
+    Scanner.ScanTo(_lifeFormTerrain, _favoritesFormTerrain);
     _lifeForm.Invalidate();
     _favoritesForm.Invalidate();
   }

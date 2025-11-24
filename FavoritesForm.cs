@@ -1,6 +1,6 @@
 public class FavoritesForm : Form
 {
-  public Terrain _terrain;
+  private Terrain _terrain;
   private int _cellSize = 10;
 
   public FavoritesForm(Terrain terrain)
