@@ -4,7 +4,8 @@ public class GameLife
   private Terrain _favoritesFormTerrain;
   private LifeFrom _lifeForm;
   private FavoritesForm _favoritesForm;
-  private System.Windows.Forms.Timer _timer;
+  private System.Windows.Forms.Timer _timer = new();
+  private HashSet<Colony> _colonies = new();
 
   public GameLife()
   {
@@ -13,13 +14,13 @@ public class GameLife
     _favoritesFormTerrain = _lifeFormTerrain.GetCopy();
     _favoritesForm = new FavoritesForm(_favoritesFormTerrain);
     Scanner.ScanTo(_lifeFormTerrain, _favoritesFormTerrain);
+
+    _timer.Interval = 500;
+    _timer.Tick += TimerTick;
   }
 
   public void Run()
   {
-    _timer = new System.Windows.Forms.Timer();
-    _timer.Interval = 500;
-    _timer.Tick += TimerTick;
     _timer.Start();
 
     _lifeForm.Show();
@@ -33,5 +34,15 @@ public class GameLife
     Scanner.ScanTo(_lifeFormTerrain, _favoritesFormTerrain);
     _lifeForm.Invalidate();
     _favoritesForm.Invalidate();
+  }
+
+  public void AddColony(Colony colony)
+  {
+    _colonies.Add(colony);
+  }
+  
+  public void RemoveColony(Colony colony)
+  {
+    _colonies.Remove(colony);
   }
 }

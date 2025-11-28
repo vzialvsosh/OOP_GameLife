@@ -1,16 +1,17 @@
 public class Terrain
 {
-  private Cell[,] _field;
-  private double _possibitity = 0.4;
+  // private Cell[,] _field;
+  private double _possibitity = 0.3;
 
   public int Width { get; private set; }
   public int Height { get; private set; }
-  public Cell[,] Field
-  {
-    get => _field;
-    private set => _field = value;
-  }
-
+  public Cell[,] Field { get; private set; }
+  // public Cell[,] Field
+  // {
+  //   get => _field;
+  //   private set => _field = value;
+  // }
+  
   public Terrain(int width, int height)
   {
     Width = width;
@@ -26,8 +27,8 @@ public class Terrain
     {
       for (int j = 0; j < Height; ++j)
       {
-        if (Field[i, j].Alive) terrain.Field[i, j] = new Cell(true);
-        else terrain.Field[i, j] = new Cell(false);
+        if (Field[i, j].IsAlive) terrain.Field[i, j] = new Cell(true, terrain, i, j);
+        else terrain.Field[i, j] = new Cell(false, terrain, i, j);
       }
     }
     return terrain;
@@ -40,8 +41,8 @@ public class Terrain
     {
       for (int j = 0; j < Height; ++j)
       {
-        if (Field[i, j].Alive) terrain.Field[i, j] = new Cell(true);
-        else terrain.Field[i, j] = new Cell(false);
+        if (Field[i, j].IsAlive) terrain.Field[i, j] = new Cell(true, terrain, i, j);
+        else terrain.Field[i, j] = new Cell(false, terrain, i, j);
       }
     }
   }
@@ -53,7 +54,7 @@ public class Terrain
     {
       for (int j = 0; j < Height; ++j)
       {
-        Field[i, j] = new Cell(rnd.NextDouble() < _possibitity);
+        Field[i, j] = new Cell(rnd.NextDouble() < _possibitity, this, i, j);
       }
     }
   }
@@ -66,7 +67,7 @@ public class Terrain
     {
       for (int j = 0; j < Height; ++j)
       {
-        Field[i, j] = new Cell(array[i, j]);
+        Field[i, j] = new Cell(array[i, j], this, i, j);
       }
     }
   }
@@ -77,7 +78,7 @@ public class Terrain
     {
       for (int j = 0; j < Height; ++j)
       {
-        Field[i, j] = new Cell(false);
+        Field[i, j] = new Cell(false, this, i, j);
       }
     }
   }
@@ -89,31 +90,10 @@ public class Terrain
     {
       for (int j = 0; j < Height; ++j)
       {
-        updatedField[i, j] = UpdatedCell(i, j);
+        updatedField[i, j] = new Cell(Field[i, j].WillBeAlive(), this, i, j);
       }
     }
     Field = updatedField;
-  }
-
-  private Cell UpdatedCell(int i, int j)
-  {
-    int cnt = CellNeighboursCount(i, j);
-    if (Field[i, j].Alive && (cnt < 2 || cnt > 3)) return new Cell(false);
-    else if (!Field[i, j].Alive && cnt == 3) return new Cell(true);
-    return new Cell(Field[i, j].Alive);
-  }
-
-  private int CellNeighboursCount(int i, int j)
-  {
-    int cnt = Field[i, j].Alive ? -1 : 0;
-    for (int x = i - 1; x <= i + 1; ++x)
-    {
-      for (int y = j - 1; y <= j + 1; ++y)
-      {
-        if (IsOnField(x, y) && Field[x, y].Alive) ++cnt;
-      }
-    }
-    return cnt;
   }
 
   public bool IsOnField(int i, int j) => i >= 0 && i < Width && j >= 0 && j < Height;

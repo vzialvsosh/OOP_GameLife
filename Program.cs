@@ -7,5 +7,4 @@ static class Program
     GameLife game = new GameLife();
     game.Run();
   }
-
 }

@@ -2,15 +2,24 @@ public class FavoritesForm : Form
 {
   private Terrain _terrain;
   private int _cellSize = 10;
+  private bool[,] _mask;
 
   public FavoritesForm(Terrain terrain)
   {
     _terrain = terrain;
+    _mask = new bool[terrain.Width, terrain.Height];
     StartPosition = FormStartPosition.Manual;
     Location = new Point(620, 100);
     Size = new Size(600, 600);
     Text = "FavoritesForm";
     Paint += DrawTerrain;
+  }
+
+  public void ChangeMask(bool[,] mask)
+  {
+    if (mask.GetLength(0) != _terrain.Width || mask.GetLength(1) != _terrain.Height)
+      throw new InvalidOperationException("Mask doesn't fit the terrain");
+    _mask = mask;
   }
 
   private void DrawTerrain(object? sender, PaintEventArgs e)
@@ -33,7 +42,7 @@ public class FavoritesForm : Form
   
   private void DrawCell(int i, int j, Graphics g)
   {
-    if (!_terrain.Field[i, j].Alive) return;
+    if (!_terrain.Field[i, j].IsAlive) return;
     Color cellColor = Color.Green;
     Brush brush = new SolidBrush(cellColor);
     g.FillRectangle(brush, i * _cellSize, j * _cellSize, _cellSize, _cellSize);
