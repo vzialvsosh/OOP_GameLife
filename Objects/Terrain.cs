@@ -6,6 +6,7 @@ public class Terrain
   public int Width { get; private set; }
   public int Height { get; private set; }
   public Cell[,] Field { get; private set; }
+  public HashSet<Colony> Colonies { get; private set; } = new();
   // public Cell[,] Field
   // {
   //   get => _field;
@@ -27,8 +28,9 @@ public class Terrain
     {
       for (int j = 0; j < Height; ++j)
       {
-        if (Field[i, j].IsAlive) terrain.Field[i, j] = new Cell(true, terrain, i, j);
-        else terrain.Field[i, j] = new Cell(false, terrain, i, j);
+        // if (Field[i, j].IsAlive) terrain.Field[i, j] = new Cell(true, terrain, i, j);
+        // else terrain.Field[i, j] = new Cell(false, terrain, i, j);
+        terrain.Field[i, j] = Field[i, j].GetCopy(terrain);
       }
     }
     return terrain;
@@ -90,12 +92,39 @@ public class Terrain
     {
       for (int j = 0; j < Height; ++j)
       {
-        updatedField[i, j] = new Cell(Field[i, j].WillBeAlive(), this, i, j);
+        updatedField[i, j] = Field[i, j].GenerateNextCell();
       }
     }
     Field = updatedField;
+    foreach (Colony colony in Colonies)
+    {
+      colony.UpdateMembers();
+    }
+    foreach (Colony colony in Colonies)
+    {
+      colony.Move();
+    }
   }
 
   public bool IsOnField(int i, int j) => i >= 0 && i < Width && j >= 0 && j < Height;
   
+  public void OrganizeColony(object? sender, StablePatternEvetnArgs args)
+  {
+    Colony colony = new(this);
+    for (int i = args.Frame.minX; i <= args.Frame.maxX; ++i)
+    {
+      for (int j = args.Frame.minY; j <= args.Frame.maxY; ++j)
+      {
+        if (!args.Component[i, j]) continue;
+        colony.AddNextMember(Field[i, j]);
+        Field[i, j].SetColony(colony);
+      }
+    }
+    Colonies.Add(colony);
+  }
+
+  public void RemoveColony(Colony colony)
+  {
+    Colonies.Remove(colony);
+  }
 }

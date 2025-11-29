@@ -42,8 +42,8 @@ public class FavoritesForm : Form
   
   private void DrawCell(int i, int j, Graphics g)
   {
-    if (!_terrain.Field[i, j].IsAlive) return;
-    Color cellColor = Color.Green;
+    if (!_terrain.Field[i, j].IsAlive || !_mask[i, j]) return;
+    Color cellColor = _terrain.Field[i, j].IsWhite() ? Color.Green : Color.Red;
     Brush brush = new SolidBrush(cellColor);
     g.FillRectangle(brush, i * _cellSize, j * _cellSize, _cellSize, _cellSize);
     brush.Dispose();
