@@ -27,13 +27,17 @@ public class Colony
 
   public void UpdateMembers()
   {
-    foreach (Cell cell in Members)
-    {
-      cell.MakeColonyNull();
-      // Members.Remove(cell);
-    }
+    // foreach (Cell cell in Members)
+    // {
+    //   cell.MakeColonyNull();
+    //   // Members.Remove(cell);
+    // }
     Members = NextMembers;
     NextMembers = new();
+    if (Members.Count == 0)
+    {
+      _terrain.RemoveColony(this);
+    }
   }
 
   public void Move()
@@ -45,7 +49,6 @@ public class Colony
     }
     if (UniteWithNeighbourColony())
     {
-      UpdateMembers();
       ChangeDirection();
       return;
     }
@@ -60,19 +63,19 @@ public class Colony
         NextMembers = new();
         return;
       }
-      NextMembers.Add(_terrain.Field[x, y]);
+      AddNextMember(_terrain.Field[x, y]);
     }
 
     foreach (Cell cell in Members)
     {
       cell.Kill();
     }
-    UpdateMembers();
-    foreach (Cell cell in Members)
+    foreach (Cell cell in NextMembers)
     {
       cell.MakeAlive();
-      cell.SetColony(this);
+      cell.Colony = this;
     }
+    UpdateMembers();
   }
 
   private bool UniteWithNeighbourColony()
@@ -99,15 +102,16 @@ public class Colony
     if (this == colony) return false;
     foreach (Cell cell in colony.Members)
     {
-      NextMembers.Add(cell);
+      // NextMembers.Add(cell);
       cell.SetColony(this);
     }
     foreach (Cell cell in Members)
     {
-      NextMembers.Add(cell);
+      AddNextMember(cell);
     }
     colony.Members = new();
     _terrain.RemoveColony(colony);
+    UpdateMembers();
     return true;
   }
   

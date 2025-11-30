@@ -1,7 +1,7 @@
 public class Cell
 {
   private Terrain _terrain;
-  public Colony? Colony { get; private set; }
+  public Colony? Colony;// { get; private set; }
 
   // public enum CellColor
   // {
@@ -24,7 +24,8 @@ public class Cell
   public Cell GetCopy(Terrain terrain)
   {
     Cell cell = new(IsAlive, terrain, I, J);
-    cell.SetColony(Colony);
+    // cell.SetColony(Colony);
+    cell.Colony = Colony;
     return cell;
   }
 
@@ -47,7 +48,11 @@ public class Cell
     Cell cell = GetCellAfterDominating(cntBlack, cntWhite);
     if (cell.IsBlack())
     {
-      if (cntBlack < 2 || cntBlack > 3) cell.Kill();
+      if (cntBlack < 2 || cntBlack > 3)
+      {
+        cell.Kill();
+        cell.SetColony(null);
+      }
       return cell;
     }
     if (cell.IsWhite())
@@ -68,7 +73,7 @@ public class Cell
       // else Colony!.ReplaceMember(this, cell);
       if (cntWhite <= cntBlack + 1)
       {
-        Colony!.AddNextMember(cell);
+        // Colony!.AddNextMember(cell);
         cell.SetColony(Colony);
       }
       return cell;
@@ -118,12 +123,14 @@ public class Cell
   public void Kill()
   {
     IsAlive = false;
-    SetColony(null);
+    // SetColony(null);
+    // MakeColonyNull();
   }
 
   public void SetColony(Colony? colony)
   {
     Colony?.RemoveNextMember(this);
+    colony?.AddNextMember(this);
     Colony = colony;
   }
 
@@ -149,6 +156,7 @@ public class Cell
 
   public void AddToColony(Cell cell)
   {
-    Colony?.AddNextMember(cell);
+    // Colony?.AddNextMember(cell);
+    cell.SetColony(Colony);
   }
 }

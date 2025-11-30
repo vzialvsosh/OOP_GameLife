@@ -116,10 +116,11 @@ public class Terrain
       for (int j = args.Frame.minY; j <= args.Frame.maxY; ++j)
       {
         if (!args.Component[i, j]) continue;
-        colony.AddNextMember(Field[i, j]);
+        // colony.AddNextMember(Field[i, j]);
         Field[i, j].SetColony(colony);
       }
     }
+    colony.UpdateMembers();
     Colonies.Add(colony);
   }
 
