@@ -10,14 +10,9 @@ public class Colony
 
   private Terrain _terrain;
   private int[] _direction = _directions[0];
-  // private bool IsMoving = true;
-
-
-  // public int Count { get; private set; }
 
   public HashSet<Cell> NextMembers { get; private set; } = new();
   public HashSet<Cell> Members { get; private set; } = new();
-  // public int[] Direction { get; private set; } = Directions[0];
 
   public Colony(Terrain terrain)
   {
@@ -102,7 +97,6 @@ public class Colony
     if (this == colony) return false;
     foreach (Cell cell in colony.Members)
     {
-      // NextMembers.Add(cell);
       cell.SetColony(this);
     }
     foreach (Cell cell in Members)
@@ -139,11 +133,4 @@ public class Colony
   {
     if (NextMembers.Remove(cell)) cell.MakeColonyNull();
   }
-
-  // public void ReplaceNextMember(Cell replacedCell, Cell newCell)
-  // {
-  //   RemoveNextMember(replacedCell);
-  //   AddNextMember(newCell);
-  //   newCell.SetColony(this);
-  // }
 }

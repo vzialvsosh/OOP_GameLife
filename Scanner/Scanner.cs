@@ -1,5 +1,3 @@
-using System.Windows.Forms.VisualStyles;
-
 public class StablePatternEvetnArgs : EventArgs
 {
   public bool[,] Component { get; private set; }

@@ -11,14 +11,11 @@ public class GameLife
     _terrain = new Terrain(50, 50);
     _lifeForm = new LifeFrom(_terrain);
     Scanner.StablePatternDetected += _terrain.OrganizeColony;
-    // _favoritesFormTerrain = _terrain.GetCopy();
 
-    // _favoritesForm = new FavoritesForm(_favoritesFormTerrain);
-    // Scanner.ScanTo(_terrain, _favoritesFormTerrain);
     _favoritesForm = new FavoritesForm(_terrain);
     _favoritesForm.ChangeMask(Scanner.Scan(_terrain));
 
-    _timer.Interval = 250;
+    _timer.Interval = 350;
     _timer.Tick += TimerTick;
   }
 

@@ -1,17 +1,11 @@
 public class Cell
 {
   private Terrain _terrain;
-  public Colony? Colony;// { get; private set; }
+  public Colony? Colony;
 
-  // public enum CellColor
-  // {
-  //   White,
-  //   Black
-  // }
   public int I { get; private set; }
   public int J { get; private set; }
   public bool IsAlive { get; private set; }
-  // public CellColor Color { get; private set; } = CellColor.White;
 
   public Cell(bool alive, Terrain terrain, int i, int j)
   {
@@ -24,7 +18,6 @@ public class Cell
   public Cell GetCopy(Terrain terrain)
   {
     Cell cell = new(IsAlive, terrain, I, J);
-    // cell.SetColony(Colony);
     cell.Colony = Colony;
     return cell;
   }
@@ -32,14 +25,6 @@ public class Cell
   public bool IsBlack() => IsAlive && Colony != null;
 
   public bool IsWhite() => IsAlive && Colony == null;
-
-  // public bool WillBeAlive()
-  // {
-  //   int cntAlive = WhiteNeighboursCount() + BlackNeighboursCount();
-  //   if (IsAlive && (cntAlive < 2 || cntAlive > 3)) return false;
-  //   else if (!IsAlive && cntAlive == 3) return true;
-  //   return IsAlive;
-  // }
 
   public Cell GenerateNextCell()
   {
@@ -69,11 +54,8 @@ public class Cell
     Cell cell = new(IsAlive, _terrain, I, J);
     if (IsBlack())
     {
-      // if (cntWhite > cntBlack + 1) Colony!.RemoveMember(this);
-      // else Colony!.ReplaceMember(this, cell);
       if (cntWhite <= cntBlack + 1)
       {
-        // Colony!.AddNextMember(cell);
         cell.SetColony(Colony);
       }
       return cell;
@@ -123,8 +105,6 @@ public class Cell
   public void Kill()
   {
     IsAlive = false;
-    // SetColony(null);
-    // MakeColonyNull();
   }
 
   public void SetColony(Colony? colony)
@@ -156,7 +136,6 @@ public class Cell
 
   public void AddToColony(Cell cell)
   {
-    // Colony?.AddNextMember(cell);
     cell.SetColony(Colony);
   }
 }
