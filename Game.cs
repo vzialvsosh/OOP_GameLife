@@ -1,19 +1,16 @@
 public class GameLife
 {
   private Terrain _terrain;
-  // private Terrain _favoritesFormTerrain;
-  private LifeFrom _lifeForm;
-  private FavoritesForm _favoritesForm;
   private System.Windows.Forms.Timer _timer = new();
 
   public GameLife()
   {
-    _terrain = new Terrain(50, 50);
-    _lifeForm = new LifeFrom(_terrain);
-    Scanner.StablePatternDetected += _terrain.OrganizeColony;
+    _terrain = new ScannerTerrainDecorator(new StatisticsTerrainDecorator(new Terrain(50, 50)));
+    // _terrain = new StatisticsTerrainDecorator(new ScannerTerrainDecorator(new Terrain(50, 50)));
 
-    _favoritesForm = new FavoritesForm(_terrain);
-    _favoritesForm.ChangeMask(Scanner.Scan(_terrain));
+    _terrain.SetName("GameLife");
+    _terrain.SetLocation(20, 100);
+    _terrain.SetSize(750, 600);
 
     _timer.Interval = 350;
     _timer.Tick += TimerTick;
@@ -22,18 +19,14 @@ public class GameLife
   public void Run()
   {
     _timer.Start();
-
-    _lifeForm.Show();
-    _favoritesForm.Show();
+    _terrain.Show();
+    _terrain.DrawFeatures(_terrain.Controls);
     Application.Run();
   }
 
   private void TimerTick(object? sender, EventArgs e)
   {
     _terrain.UpdateField();
-    // Scanner.ScanTo(_terrain, _favoritesFormTerrain);
-    _favoritesForm.ChangeMask(Scanner.Scan(_terrain));
-    _lifeForm.Invalidate();
-    _favoritesForm.Invalidate();
+    _terrain.Invalidate();
   }
 }

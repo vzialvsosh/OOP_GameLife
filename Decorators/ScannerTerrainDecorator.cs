@@ -1,17 +1,45 @@
 public class StablePatternEvetnArgs : EventArgs
 {
   public bool[,] Component { get; private set; }
-  public Scanner.Frame Frame { get; private set; }
+  public ScannerTerrainDecorator.Frame Frame { get; private set; }
 
-  public StablePatternEvetnArgs(bool[,] component, Scanner.Frame frame)
+  public StablePatternEvetnArgs(bool[,] component, ScannerTerrainDecorator.Frame frame)
   {
     Component = component;
     Frame = frame;
   }
 }
 
-public static class Scanner
+public class ScannerTerrainDecorator : TerrainDecorator
 {
+  private bool[,] _mask;
+  public bool IgnoreMask { get; private set; } = true;
+
+  public ScannerTerrainDecorator(Terrain terrain) : base(terrain)
+  {
+    StablePatternDetected += _terrain.OrganizeColony;
+    ClearMask();
+  }
+
+  public void ChangeMask(bool[,] mask)
+  {
+    if (mask.GetLength(0) != TerrainWidth || mask.GetLength(1) != TerrainHeight)
+      throw new InvalidOperationException("Mask doesn't fit the terrain");
+    _mask = mask;
+  }
+
+  public void ClearMask()
+  {
+    _mask = new bool[TerrainWidth, TerrainHeight];
+    for (int i = 0; i < TerrainWidth; ++i)
+    {
+      for (int j = 0; j < TerrainHeight; ++j)
+      {
+        _mask[i, j] = true;
+      }
+    }
+  }
+
   public static Patterns patterns = new Patterns();
   public struct Frame
   {
@@ -20,12 +48,12 @@ public static class Scanner
     public int minY;
     public int maxY;
   }
-  public static event EventHandler<StablePatternEvetnArgs>? StablePatternDetected;
+  public event EventHandler<StablePatternEvetnArgs>? StablePatternDetected;
 
-  public static bool[,] Scan(Terrain terrain)
+  public void Scan()
   {
-    Terrain copyTerrain = terrain.GetCopy();
-    return AddColonies(GetComponents(copyTerrain), terrain.Colonies);
+    Terrain copyTerrain = _terrain.GetCopy();
+    _mask = AddColonies(GetComponents(copyTerrain), _terrain.Colonies);
   }
 
   private static bool[,] AddColonies(bool[,] components, HashSet<Colony> colonies)
@@ -40,14 +68,14 @@ public static class Scanner
     return components;
   }
 
-  private static bool[,] GetComponents(Terrain terrain)
+  private bool[,] GetComponents(Terrain terrain)
   {
-    bool[,] components = new bool[terrain.Width, terrain.Height];
+    bool[,] components = new bool[terrain.TerrainWidth, terrain.TerrainHeight];
     bool[,] component;
     Frame frame;
-    for (int i = 0; i < terrain.Width; ++i)
+    for (int i = 0; i < terrain.TerrainWidth; ++i)
     {
-      for (int j = 0; j < terrain.Height; ++j)
+      for (int j = 0; j < terrain.TerrainHeight; ++j)
       {
         if (terrain.Field[i, j].IsWhite())
         {
@@ -66,13 +94,13 @@ public static class Scanner
 
   private static (bool[,] component, Frame frame) CutComponent(Terrain terrain, int i, int j)
   {
-    bool[,] component = new bool[terrain.Width, terrain.Height];
+    bool[,] component = new bool[terrain.TerrainWidth, terrain.TerrainHeight];
     Queue<Tuple<int, int>> queue = new Queue<Tuple<int, int>>();
     Frame frame = new Frame
     {
-      minX = terrain.Width,
+      minX = terrain.TerrainWidth,
       maxX = 0,
-      minY = terrain.Height,
+      minY = terrain.TerrainHeight,
       maxY = 0
     };
 
@@ -177,7 +205,6 @@ public static class Scanner
 
   private static bool IsStable(bool[,] component, Frame frame)
   {
-    bool[,] newArray = new bool[component.GetLength(0), component.GetLength(1)];
     for (int i = frame.minX - 1; i <= frame.maxX + 1; ++i)
     {
       for (int j = frame.minY; j <= frame.maxY + 1; ++j)
@@ -190,12 +217,38 @@ public static class Scanner
       }
     }
     return true;
-    // return Util.ArraysEqual(component, Util.GetNextPhase(component));
   }
 
-  // private static Colony CreateColony(bool[,] component)
+  // protected override void Draw(object? sender, PaintEventArgs e)
   // {
-  //   Colony colony = new();
-  //   for (int i = 0; i < component.)
+  //   UpdateField();
+  //   DrawTerrain(e);
+  //   DrawFeatures(Controls);
   // }
+
+  public override void DrawTerrain(PaintEventArgs e, bool[,]? mask, bool? ignoreMask)
+  {
+    Scan();
+    // e.Graphics.DrawImage(_terrain.Render(_mask, IgnoreMask), 0, 0);
+    _terrain.DrawTerrain(e, mask, ignoreMask);
+  }
+
+  public void DrawTerrainWithoutScan(PaintEventArgs e)
+  {
+    _terrain.DrawTerrain(e, _mask, IgnoreMask);
+  }
+
+  public override void DrawFeatures(Control.ControlCollection controls)
+  {
+    _terrain.DrawFeatures(controls);
+
+    CheckBox onlyFavouritesCheckBox = new();
+    onlyFavouritesCheckBox.Size = new Size(200, 50);
+    onlyFavouritesCheckBox.Text = $"Show only favorites";
+    onlyFavouritesCheckBox.Location = new Point(510, 50);
+
+    controls.Add(onlyFavouritesCheckBox);
+    // onlyFavouritesCheckBox.CheckedChanged += (sender, e) => SetIgnoreMask(!onlyFavouritesCheckBox.Checked);
+    onlyFavouritesCheckBox.CheckedChanged += (sender, e) => IgnoreMask = !onlyFavouritesCheckBox.Checked;
+  }
 }
