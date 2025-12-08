@@ -8,10 +8,8 @@ public class Terrain : Form
   public virtual HashSet<Colony> Colonies { get; private set; } = new();
 
   protected int _cellSize = 10;
-  // protected bool[,] _mask;
-  public virtual bool visibleNet { get; private set; } = false;
-
-  // public virtual void SetIgnoreMask(bool ignoreMask) => IgnoreMask = ignoreMask;
+  private bool _visibleNet = false;
+  public virtual bool OnPause { get; private set; } = false;
 
   public void SetName(string name)
   {
@@ -31,7 +29,7 @@ public class Terrain : Form
 
   public void SetDefaultSize()
   {
-    Size = new Size(_cellSize * TerrainWidth + 250, _cellSize * TerrainHeight + 100);
+    Size = new Size(_cellSize * TerrainWidth + 250, Math.Max(_cellSize * TerrainHeight + 100, 400));
   }
 
   public Terrain(int terrainWidth, int terrainHeight)
@@ -168,7 +166,7 @@ public class Terrain : Form
     Bitmap bmp = new Bitmap(TerrainWidth * _cellSize, TerrainHeight * _cellSize);
     var g = Graphics.FromImage(bmp);
     g.Clear(Color.White);
-    if (visibleNet)
+    if (_visibleNet)
     {
       Pen pen = new(Color.Gray);
       for (int i = 0; i < bmp.Width; i += _cellSize)
@@ -207,12 +205,26 @@ public class Terrain : Form
 
   public virtual void DrawFeatures(Control.ControlCollection controls)
   {
-    CheckBox visibleNetCheckBox = new();
-    visibleNetCheckBox.Text = "Visible net";
-    visibleNetCheckBox.Size = new Size(100, 50);
-    visibleNetCheckBox.Location = new Point(_cellSize * TerrainWidth + 10, 10);
-    controls.Add(visibleNetCheckBox);
+    CheckBox checkBoxVisibleNet = new();
+    checkBoxVisibleNet.Text = "Visible net";
+    checkBoxVisibleNet.Size = new Size(100, 20);
+    checkBoxVisibleNet.Location = new Point(_cellSize * TerrainWidth + 10, 10);
+    checkBoxVisibleNet.CheckedChanged += (sender, e) => { _visibleNet = checkBoxVisibleNet.Checked; };
 
-    visibleNetCheckBox.CheckedChanged += (sender, e) => { visibleNet = visibleNetCheckBox.Checked; };
+    CheckBox checkBoxOnPause = new();
+    checkBoxOnPause.Text = "OnPause:";
+    checkBoxOnPause.Size = new Size(100, 20);
+    checkBoxOnPause.Location = new Point(_cellSize * TerrainWidth + 110, 10);
+    checkBoxOnPause.CheckedChanged += (sender, e) => { OnPause = checkBoxOnPause.Checked; };
+
+    Button buttonExit = new();
+    buttonExit.Text = "Exit";
+    buttonExit.Size = new Size(50, 30);
+    buttonExit.Location = new Point(_cellSize * TerrainWidth + 10, 350);
+    buttonExit.Click += (sender, e) => Application.Exit();
+
+    controls.Add(checkBoxVisibleNet);
+    controls.Add(checkBoxOnPause);
+    controls.Add(buttonExit);
   }
 }

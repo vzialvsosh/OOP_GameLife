@@ -109,7 +109,6 @@ public class StatisticsTerrainDecorator : TerrainDecorator
     labelUpdateDuration.Size = new Size(200, 20);
     labelUpdateDuration.Location = new Point(_cellSize * TerrainWidth + 10, 250);
 
-    controls.Add(labelUpdateDuration);
     updated += () => labelUpdateDuration.Text = $"Updating duration: {_updateDuration:F4} sec";
 
     Label labelScanDuration = new();
@@ -117,8 +116,10 @@ public class StatisticsTerrainDecorator : TerrainDecorator
     labelScanDuration.Size = new Size(200, 50);
     labelScanDuration.Location = new Point(_cellSize * TerrainWidth + 10, 280);
 
-    controls.Add(labelScanDuration);
     scanned += () => labelScanDuration.Text = $"Scanning duration: {_scanDuration:F4} sec";
+
+    controls.Add(labelUpdateDuration);
+    controls.Add(labelScanDuration);
   }
 
   // public override void UpdateField()

@@ -11,7 +11,7 @@ abstract public class TerrainDecorator : Terrain
   public override HashSet<Colony> Colonies => _terrain.Colonies;
 
   // public override bool IgnoreMask => _terrain.IgnoreMask;
-  public override bool visibleNet => _terrain.visibleNet;
+  public override bool OnPause => _terrain.OnPause;
 
   public TerrainDecorator(Terrain terrain) : base(0, 0)
   {

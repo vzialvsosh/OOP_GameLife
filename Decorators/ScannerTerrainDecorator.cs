@@ -241,13 +241,13 @@ public class ScannerTerrainDecorator : TerrainDecorator
   {
     _terrain.DrawFeatures(controls);
 
-    CheckBox onlyFavouritesCheckBox = new();
-    onlyFavouritesCheckBox.Size = new Size(200, 50);
-    onlyFavouritesCheckBox.Text = $"Show only favorites";
-    onlyFavouritesCheckBox.Location = new Point(_cellSize * TerrainWidth + 10, 50);
+    CheckBox checkBoxOnlyFavourites = new();
+    checkBoxOnlyFavourites.Size = new Size(200, 50);
+    checkBoxOnlyFavourites.Text = $"Show only favorites";
+    checkBoxOnlyFavourites.Location = new Point(_cellSize * TerrainWidth + 10, 50);
 
-    controls.Add(onlyFavouritesCheckBox);
-    // onlyFavouritesCheckBox.CheckedChanged += (sender, e) => SetIgnoreMask(!onlyFavouritesCheckBox.Checked);
-    onlyFavouritesCheckBox.CheckedChanged += (sender, e) => IgnoreMask = !onlyFavouritesCheckBox.Checked;
+    controls.Add(checkBoxOnlyFavourites);
+    // checkBoxOnlyFavourites.CheckedChanged += (sender, e) => SetIgnoreMask(!checkBoxOnlyFavourites.Checked);
+    checkBoxOnlyFavourites.CheckedChanged += (sender, e) => IgnoreMask = !checkBoxOnlyFavourites.Checked;
   }
 }
