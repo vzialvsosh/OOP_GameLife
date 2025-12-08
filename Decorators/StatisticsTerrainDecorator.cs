@@ -60,25 +60,31 @@ public class StatisticsTerrainDecorator : TerrainDecorator
       labelAlive.Text += $"( {100 * (double)(_cntWhite - _lastCntWhite + _cntBlack - _lastCntBlack) / (_lastCntBlack + _lastCntWhite):+0.###;-0.###}% )";
 
     labelAlive.Size = new Size(300, 20);
-    labelAlive.Location = new Point(510, 100);
+    labelAlive.Location = new Point(_cellSize * TerrainWidth + 10, 100);
 
     Label labelWhite = new();
     labelWhite.Text = $"Number of white cells: {_cntWhite}";
     if (_lastCntWhite != 0) labelWhite.Text += $"( {100 * (double)(_cntWhite - _lastCntWhite) / _lastCntWhite:+0.###;-0.###}% )";
 
     labelWhite.Size = new Size(300, 20);
-    labelWhite.Location = new Point(510, 130);
+    labelWhite.Location = new Point(_cellSize * TerrainWidth + 10, 130);
 
     Label labelBlack = new();
     labelBlack.Text = $"Number of black cells: {_cntBlack}";
     if (_lastCntBlack != 0) labelBlack.Text += $"( {100 * (double)(_cntBlack - _lastCntBlack) / _lastCntBlack:+0.###;-0.###}% )";
 
     labelBlack.Size = new Size(300, 20);
-    labelBlack.Location = new Point(510, 160);
+    labelBlack.Location = new Point(_cellSize * TerrainWidth + 10, 160);
+
+    Label labelColonies = new();
+    labelColonies.Text = $"Number of black cells: {Colonies.Count}";
+    labelColonies.Size = new Size(300, 20);
+    labelColonies.Location = new Point(_cellSize * TerrainWidth + 10, 190);
 
     controls.Add(labelAlive);
     controls.Add(labelWhite);
     controls.Add(labelBlack);
+    controls.Add(labelColonies);
 
     countsUpdated += () =>
     {
@@ -91,6 +97,8 @@ public class StatisticsTerrainDecorator : TerrainDecorator
 
       labelBlack.Text = $"Number of black cells: {_cntBlack}";
       if (_lastCntBlack != 0) labelBlack.Text += $"( {100 * (double)(_cntBlack - _lastCntBlack) / _lastCntBlack:+0.###;-0.###}% )";
+
+      labelColonies.Text = $"Number of colonies: {Colonies.Count}";
     };
   }
 
@@ -99,7 +107,7 @@ public class StatisticsTerrainDecorator : TerrainDecorator
     Label labelUpdateDuration = new();
     labelUpdateDuration.Text = $"Updating duration: {_updateDuration:F4} sec";
     labelUpdateDuration.Size = new Size(200, 20);
-    labelUpdateDuration.Location = new Point(510, 200);
+    labelUpdateDuration.Location = new Point(_cellSize * TerrainWidth + 10, 250);
 
     controls.Add(labelUpdateDuration);
     updated += () => labelUpdateDuration.Text = $"Updating duration: {_updateDuration:F4} sec";
@@ -107,7 +115,7 @@ public class StatisticsTerrainDecorator : TerrainDecorator
     Label labelScanDuration = new();
     labelScanDuration.Text = $"Scanning duration: {_scanDuration:F4} sec";
     labelScanDuration.Size = new Size(200, 50);
-    labelScanDuration.Location = new Point(510, 230);
+    labelScanDuration.Location = new Point(_cellSize * TerrainWidth + 10, 280);
 
     controls.Add(labelScanDuration);
     scanned += () => labelScanDuration.Text = $"Scanning duration: {_scanDuration:F4} sec";

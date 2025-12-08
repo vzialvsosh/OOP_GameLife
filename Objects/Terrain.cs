@@ -7,7 +7,7 @@ public class Terrain : Form
   public virtual Cell[,] Field { get; private set; }
   public virtual HashSet<Colony> Colonies { get; private set; } = new();
 
-  private int _cellSize = 10;
+  protected int _cellSize = 10;
   // protected bool[,] _mask;
   public virtual bool visibleNet { get; private set; } = false;
 
@@ -27,6 +27,11 @@ public class Terrain : Form
   public void SetSize(int sizeX, int sizeY)
   {
     Size = new Size(sizeX, sizeY);
+  }
+
+  public void SetDefaultSize()
+  {
+    Size = new Size(_cellSize * TerrainWidth + 250, _cellSize * TerrainHeight + 100);
   }
 
   public Terrain(int terrainWidth, int terrainHeight)
@@ -159,7 +164,7 @@ public class Terrain : Form
 
   public virtual Bitmap Render(bool[,]? mask, bool? ignoreMask)
   {
-    if (mask != null && (mask.GetLength(0) != TerrainWidth || mask.GetLength(1) != TerrainWidth)) throw new InvalidOperationException("Mask is not suitable");
+    if (mask != null && (mask.GetLength(0) != TerrainWidth || mask.GetLength(1) != TerrainHeight)) throw new InvalidOperationException("Mask is not suitable");
     Bitmap bmp = new Bitmap(TerrainWidth * _cellSize, TerrainHeight * _cellSize);
     var g = Graphics.FromImage(bmp);
     g.Clear(Color.White);
@@ -175,9 +180,9 @@ public class Terrain : Form
         g.DrawLine(pen, 0, j, bmp.Width, j);
       }
     }
-    for (int i = 0; i < TerrainHeight; ++i)
+    for (int i = 0; i < TerrainWidth; ++i)
     {
-      for (int j = 0; j < TerrainWidth; ++j)
+      for (int j = 0; j < TerrainHeight; ++j)
       {
         DrawCell(i, j, mask, ignoreMask, g);
       }
@@ -205,7 +210,7 @@ public class Terrain : Form
     CheckBox visibleNetCheckBox = new();
     visibleNetCheckBox.Text = "Visible net";
     visibleNetCheckBox.Size = new Size(100, 50);
-    visibleNetCheckBox.Location = new Point(510, 10);
+    visibleNetCheckBox.Location = new Point(_cellSize * TerrainWidth + 10, 10);
     controls.Add(visibleNetCheckBox);
 
     visibleNetCheckBox.CheckedChanged += (sender, e) => { visibleNet = visibleNetCheckBox.Checked; };

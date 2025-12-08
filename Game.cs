@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 public class GameLife
 {
   private Terrain _terrain;
@@ -5,12 +7,16 @@ public class GameLife
 
   public GameLife()
   {
-    _terrain = new ScannerTerrainDecorator(new StatisticsTerrainDecorator(new Terrain(50, 50)));
-    // _terrain = new StatisticsTerrainDecorator(new ScannerTerrainDecorator(new Terrain(50, 50)));
+    // _terrain = new Terrain(60, 50);
+    // _terrain = new ScannerTerrainDecorator(new Terrain(60, 50));
+    // _terrain = new StatisticsTerrainDecorator(new Terrain(60, 50));
+    // _terrain = new ScannerTerrainDecorator(new StatisticsTerrainDecorator(new Terrain(60, 50)));
+    _terrain = new StatisticsTerrainDecorator(new ScannerTerrainDecorator(new Terrain(60, 50)));
 
     _terrain.SetName("GameLife");
     _terrain.SetLocation(20, 100);
-    _terrain.SetSize(750, 600);
+    _terrain.SetDefaultSize();
+    // _terrain.SetSize(750, 600);
 
     _timer.Interval = 350;
     _timer.Tick += TimerTick;

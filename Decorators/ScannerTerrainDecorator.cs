@@ -229,8 +229,7 @@ public class ScannerTerrainDecorator : TerrainDecorator
   public override void DrawTerrain(PaintEventArgs e, bool[,]? mask, bool? ignoreMask)
   {
     Scan();
-    // e.Graphics.DrawImage(_terrain.Render(_mask, IgnoreMask), 0, 0);
-    _terrain.DrawTerrain(e, mask, ignoreMask);
+    _terrain.DrawTerrain(e, _mask, IgnoreMask);
   }
 
   public void DrawTerrainWithoutScan(PaintEventArgs e)
@@ -245,7 +244,7 @@ public class ScannerTerrainDecorator : TerrainDecorator
     CheckBox onlyFavouritesCheckBox = new();
     onlyFavouritesCheckBox.Size = new Size(200, 50);
     onlyFavouritesCheckBox.Text = $"Show only favorites";
-    onlyFavouritesCheckBox.Location = new Point(510, 50);
+    onlyFavouritesCheckBox.Location = new Point(_cellSize * TerrainWidth + 10, 50);
 
     controls.Add(onlyFavouritesCheckBox);
     // onlyFavouritesCheckBox.CheckedChanged += (sender, e) => SetIgnoreMask(!onlyFavouritesCheckBox.Checked);
