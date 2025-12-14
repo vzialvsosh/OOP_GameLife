@@ -21,7 +21,6 @@ public class Cell
   public int I { get; private set; }
   public int J { get; private set; }
   public bool IsAlive { get; private set; }
-  // public CellType cellType;
 
   public bool IsBlack() => IsAlive && Colony != null;
 
@@ -30,7 +29,6 @@ public class Cell
   public Cell(bool alive, Terrain terrain, int i, int j)
   {
     IsAlive = alive;
-    // cellType = alive ? CellType.White : CellType.Empty;
     _terrain = terrain;
     I = i;
     J = j;
@@ -41,8 +39,6 @@ public class Cell
     _terrain = terrain;
     I = i;
     J = j;
-    // IsAlive = alive;
-    // cellType = alive ? CellType.White : CellType.Empty;
     CellType cellType = strategies.For(terrain.Field[i, j].GetCellType()).GetNext(GetCellContext());
     if (cellType != CellType.Empty)
     {

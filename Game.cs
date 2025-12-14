@@ -13,7 +13,7 @@ public class GameLife
     _terrain = new StatisticsTerrainDecorator(
       new ScannerTerrainDecorator(
         new ColonyTerrainDecorator(
-          new Terrain(80, 50, "Colonies"))));
+          new Terrain(80, 50))));
 
     _terrain.SetName("GameLife");
     _terrain.SetLocation(20, 100);

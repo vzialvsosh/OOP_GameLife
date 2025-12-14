@@ -17,7 +17,7 @@ public class ScannerTerrainDecorator : TerrainDecorator
 
   public ScannerTerrainDecorator(Terrain terrain) : base(terrain)
   {
-    if (terrain.Mode == "Colonies") StablePatternDetected += _terrain.OrganizeColony;
+    StablePatternDetected += _terrain.OrganizeColony;
     ClearMask();
   }
 
@@ -81,12 +81,11 @@ public class ScannerTerrainDecorator : TerrainDecorator
         if (terrain.Field[i, j].IsWhite())
         {
           (component, frame) = CutComponent(terrain, i, j);
-          if (MatchesPattern(component, i, j)) AddComponent(components, component, frame);
           if (IsStable(component, frame))
           {
             AddComponent(components, component, frame);
             StablePatternDetected?.Invoke(null, new StablePatternEvetnArgs(component, frame));
-          }
+          } else if (MatchesPattern(component, i, j)) AddComponent(components, component, frame);
         }
       }
     }

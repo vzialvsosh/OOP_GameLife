@@ -49,23 +49,32 @@ public class Terrain : Form
     Field = new Cell[TerrainWidth, TerrainHeight];
     FillField();
 
-    // OnModeChanged("Classic");
-    Mode = mode;
     OnModeChanged(mode);
 
-    // ClearMask();
     Paint += Draw;
   }
 
-  private void OnModeChanged(string mode)
+  public Terrain(int terrainWidth, int terrainHeight)
   {
+    TerrainWidth = terrainWidth;
+    TerrainHeight = terrainHeight;
+    Field = new Cell[TerrainWidth, TerrainHeight];
+    FillField();
+
+    OnModeChanged("Classic");
+
+    Paint += Draw;
+  }
+
+  public virtual void OnModeChanged(string mode)
+  {
+    Mode = mode;
     WorldFactory = mode switch
     {
       "Classic" => new ClassicWorldFactory(),
       "Colonies" => new ColoniesWorldFactory(),
       _ => throw new NotImplementedException()
     };
-
     var strategies = WorldFactory.CreateStrategies();
     var cellFactory = WorldFactory.CreateCellFactory(strategies);
     Reinitialize(cellFactory);
@@ -150,20 +159,13 @@ public class Terrain : Form
       }
     }
     Field = updatedField;
-    // foreach (Colony colony in Colonies)
-    // {
-    //   colony.UpdateMembers();
-    // }
-    // foreach (Colony colony in Colonies)
-    // {
-    //   colony.Move();
-    // }
   }
 
   public virtual bool IsOnField(int i, int j) => i >= 0 && i < TerrainWidth && j >= 0 && j < TerrainHeight;
 
   public virtual void OrganizeColony(object? sender, StablePatternEvetnArgs args)
   {
+    if (Mode != "Colonies") return;
     if (Colonies == null) return;
     Colony colony = new(this);
     for (int i = args.Frame.minX; i <= args.Frame.maxX; ++i)
@@ -185,9 +187,7 @@ public class Terrain : Form
 
   protected void Draw(object? sender, PaintEventArgs e)
   {
-    // UpdateField();
     DrawTerrain(e, null, null);
-    // DrawFeatures(Controls);
   }
 
   public virtual void DrawTerrain(PaintEventArgs e, bool[,]? mask, bool? ignoreMask)
@@ -258,8 +258,21 @@ public class Terrain : Form
     buttonExit.Location = new Point(_cellSize * TerrainWidth + 10, 350);
     buttonExit.Click += (sender, e) => Application.Exit();
 
+    ComboBox comboBoxMode = new();
+    comboBoxMode.DropDownStyle = ComboBoxStyle.DropDownList;
+    comboBoxMode.Size = new Size(100, 20);
+    comboBoxMode.Location = new Point(_cellSize * TerrainWidth + 10 + 70, 355);
+    comboBoxMode.Items.Add("Classic");
+    comboBoxMode.Items.Add("Colonies");
+    comboBoxMode.SelectedIndex = 0;
+    comboBoxMode.SelectedIndexChanged += (sender, e) =>
+    {
+      OnModeChanged(comboBoxMode.Text);
+    };
+
     controls.Add(checkBoxVisibleNet);
     controls.Add(checkBoxOnPause);
     controls.Add(buttonExit);
+    controls.Add(comboBoxMode);
   }
 }

@@ -12,6 +12,7 @@ public class ColonyTerrainDecorator : TerrainDecorator
     {
       colony.UpdateMembers();
     }
+    if (Mode != "Colonies") return;
     foreach (Colony colony in Colonies!)
     {
       colony.Move();

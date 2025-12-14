@@ -17,8 +17,9 @@ abstract public class TerrainDecorator : Terrain
   public TerrainDecorator(Terrain terrain) : base(0, 0, "Classic")
   {
     _terrain = terrain;
-    // ClearMask();
   }
+
+  public override void OnModeChanged(string mode) => _terrain?.OnModeChanged(mode);
 
   public override Terrain GetCopy() => _terrain.GetCopy();
 
