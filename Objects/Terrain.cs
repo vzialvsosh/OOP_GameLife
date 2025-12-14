@@ -2,10 +2,15 @@ public class Terrain : Form
 {
   private double _possibitity = 0.3;
 
+  public IWorldFactory WorldFactory;
+  protected ICellFactory _cellFactory;
+
+  public virtual string Mode { get; private set; }
+
   public virtual int TerrainWidth { get; private set; }
   public virtual int TerrainHeight { get; private set; }
   public virtual Cell[,] Field { get; private set; }
-  public virtual HashSet<Colony> Colonies { get; private set; } = new();
+  public virtual HashSet<Colony>? Colonies { get; private set; }
 
   protected int _cellSize = 10;
   private bool _visibleNet = false;
@@ -14,6 +19,11 @@ public class Terrain : Form
   public void SetName(string name)
   {
     Text = name;
+  }
+
+  public void InitializeColonies()
+  {
+    Colonies = new();
   }
 
   public void SetLocation(int locationX, int locationY)
@@ -32,20 +42,43 @@ public class Terrain : Form
     Size = new Size(_cellSize * TerrainWidth + 250, Math.Max(_cellSize * TerrainHeight + 100, 400));
   }
 
-  public Terrain(int terrainWidth, int terrainHeight)
+  public Terrain(int terrainWidth, int terrainHeight, string mode)
   {
     TerrainWidth = terrainWidth;
     TerrainHeight = terrainHeight;
     Field = new Cell[TerrainWidth, TerrainHeight];
     FillField();
 
+    // OnModeChanged("Classic");
+    Mode = mode;
+    OnModeChanged(mode);
+
     // ClearMask();
     Paint += Draw;
   }
 
+  private void OnModeChanged(string mode)
+  {
+    WorldFactory = mode switch
+    {
+      "Classic" => new ClassicWorldFactory(),
+      "Colonies" => new ColoniesWorldFactory(),
+      _ => throw new NotImplementedException()
+    };
+
+    var strategies = WorldFactory.CreateStrategies();
+    var cellFactory = WorldFactory.CreateCellFactory(strategies);
+    Reinitialize(cellFactory);
+  }
+
+  public void Reinitialize(ICellFactory cellFactory)
+  {
+    _cellFactory = cellFactory;
+  }
+
   public virtual Terrain GetCopy()
   {
-    Terrain terrain = new Terrain(TerrainWidth, TerrainHeight);
+    Terrain terrain = new Terrain(TerrainWidth, TerrainHeight, "Classic");
     for (int i = 0; i < TerrainWidth; ++i)
     {
       for (int j = 0; j < TerrainHeight; ++j)
@@ -112,24 +145,26 @@ public class Terrain : Form
     {
       for (int j = 0; j < TerrainHeight; ++j)
       {
-        updatedField[i, j] = Field[i, j].GenerateNextCell();
+        // updatedField[i, j] = Field[i, j].GenerateNextCell();
+        updatedField[i, j] = _cellFactory.Create(i, j, Field[i, j].GetCellType(), this);
       }
     }
     Field = updatedField;
-    foreach (Colony colony in Colonies)
-    {
-      colony.UpdateMembers();
-    }
-    foreach (Colony colony in Colonies)
-    {
-      colony.Move();
-    }
+    // foreach (Colony colony in Colonies)
+    // {
+    //   colony.UpdateMembers();
+    // }
+    // foreach (Colony colony in Colonies)
+    // {
+    //   colony.Move();
+    // }
   }
 
   public virtual bool IsOnField(int i, int j) => i >= 0 && i < TerrainWidth && j >= 0 && j < TerrainHeight;
-  
+
   public virtual void OrganizeColony(object? sender, StablePatternEvetnArgs args)
   {
+    if (Colonies == null) return;
     Colony colony = new(this);
     for (int i = args.Frame.minX; i <= args.Frame.maxX; ++i)
     {
@@ -145,9 +180,9 @@ public class Terrain : Form
 
   public virtual void RemoveColony(Colony colony)
   {
-    Colonies.Remove(colony);
+    Colonies?.Remove(colony);
   }
-  
+
   protected void Draw(object? sender, PaintEventArgs e)
   {
     // UpdateField();

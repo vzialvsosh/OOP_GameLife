@@ -17,7 +17,7 @@ public class ScannerTerrainDecorator : TerrainDecorator
 
   public ScannerTerrainDecorator(Terrain terrain) : base(terrain)
   {
-    StablePatternDetected += _terrain.OrganizeColony;
+    if (terrain.Mode == "Colonies") StablePatternDetected += _terrain.OrganizeColony;
     ClearMask();
   }
 
@@ -56,8 +56,9 @@ public class ScannerTerrainDecorator : TerrainDecorator
     _mask = AddColonies(GetComponents(copyTerrain), _terrain.Colonies);
   }
 
-  private static bool[,] AddColonies(bool[,] components, HashSet<Colony> colonies)
+  private static bool[,] AddColonies(bool[,] components, HashSet<Colony>? colonies)
   {
+    if (colonies == null) return components;
     foreach (Colony colony in colonies)
     {
       foreach (Cell cell in colony.Members)

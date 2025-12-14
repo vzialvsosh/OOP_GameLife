@@ -68,7 +68,8 @@ public class Colony
     foreach (Cell cell in NextMembers)
     {
       cell.MakeAlive();
-      cell.Colony = this;
+      cell.SetColonyManually(this);
+      // cell.Colony = this;
     }
     UpdateMembers();
   }

@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 public class GameLife
 {
   private Terrain _terrain;
@@ -11,7 +9,11 @@ public class GameLife
     // _terrain = new ScannerTerrainDecorator(new Terrain(60, 50));
     // _terrain = new StatisticsTerrainDecorator(new Terrain(60, 50));
     // _terrain = new ScannerTerrainDecorator(new StatisticsTerrainDecorator(new Terrain(60, 50)));
-    _terrain = new StatisticsTerrainDecorator(new ScannerTerrainDecorator(new Terrain(80, 50)));
+    // _terrain = new StatisticsTerrainDecorator(new ScannerTerrainDecorator(new Terrain(80, 50)));
+    _terrain = new StatisticsTerrainDecorator(
+      new ScannerTerrainDecorator(
+        new ColonyTerrainDecorator(
+          new Terrain(80, 50, "Colonies"))));
 
     _terrain.SetName("GameLife");
     _terrain.SetLocation(20, 100);

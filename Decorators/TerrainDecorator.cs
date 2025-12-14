@@ -4,16 +4,17 @@ abstract public class TerrainDecorator : Terrain
   protected Terrain _terrain;
 
   private int fective = 0;
+  public override string Mode => _terrain.Mode;
 
   public override int TerrainWidth => _terrain?.TerrainWidth ?? fective;
   public override int TerrainHeight => _terrain?.TerrainHeight ?? fective;
   public override Cell[,] Field => _terrain.Field;
-  public override HashSet<Colony> Colonies => _terrain.Colonies;
+  public override HashSet<Colony>? Colonies => _terrain.Colonies;
 
   // public override bool IgnoreMask => _terrain.IgnoreMask;
   public override bool OnPause => _terrain.OnPause;
 
-  public TerrainDecorator(Terrain terrain) : base(0, 0)
+  public TerrainDecorator(Terrain terrain) : base(0, 0, "Classic")
   {
     _terrain = terrain;
     // ClearMask();

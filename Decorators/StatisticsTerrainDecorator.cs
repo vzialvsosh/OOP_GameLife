@@ -77,7 +77,7 @@ public class StatisticsTerrainDecorator : TerrainDecorator
     labelBlack.Location = new Point(_cellSize * TerrainWidth + 10, 160);
 
     Label labelColonies = new();
-    labelColonies.Text = $"Number of black cells: {Colonies.Count}";
+    labelColonies.Text = $"Number of black cells: {Colonies?.Count ?? 0}";
     labelColonies.Size = new Size(300, 20);
     labelColonies.Location = new Point(_cellSize * TerrainWidth + 10, 190);
 
@@ -98,7 +98,7 @@ public class StatisticsTerrainDecorator : TerrainDecorator
       labelBlack.Text = $"Number of black cells: {_cntBlack}";
       if (_lastCntBlack != 0) labelBlack.Text += $"( {100 * (double)(_cntBlack - _lastCntBlack) / _lastCntBlack:+0.###;-0.###}% )";
 
-      labelColonies.Text = $"Number of colonies: {Colonies.Count}";
+      labelColonies.Text = $"Number of colonies: {Colonies?.Count ?? 0}";
     };
   }
 

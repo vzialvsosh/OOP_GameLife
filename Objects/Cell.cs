@@ -1,18 +1,76 @@
+public enum CellType
+{
+  White,
+  Black,
+  Empty
+}
+
+public record CellContext
+{
+  public CellType cellType;
+  public int cntWhite;
+  public int cntBlack;
+  public int cntAlive;
+}
+
 public class Cell
 {
   private Terrain _terrain;
-  public Colony? Colony;
+  public Colony? Colony { get; private set; }
 
   public int I { get; private set; }
   public int J { get; private set; }
   public bool IsAlive { get; private set; }
+  // public CellType cellType;
+
+  public bool IsBlack() => IsAlive && Colony != null;
+
+  public bool IsWhite() => IsAlive && Colony == null;
 
   public Cell(bool alive, Terrain terrain, int i, int j)
   {
     IsAlive = alive;
+    // cellType = alive ? CellType.White : CellType.Empty;
     _terrain = terrain;
     I = i;
     J = j;
+  }
+
+  public Cell(ICellStrategyProvider strategies, Terrain terrain, int i, int j)
+  {
+    _terrain = terrain;
+    I = i;
+    J = j;
+    // IsAlive = alive;
+    // cellType = alive ? CellType.White : CellType.Empty;
+    CellType cellType = strategies.For(terrain.Field[i, j].GetCellType()).GetNext(GetCellContext());
+    if (cellType != CellType.Empty)
+    {
+      IsAlive = true;
+      if (cellType == CellType.Black)
+      {
+        AddToNeighboursColony();
+      }
+    }
+  }
+
+  public CellType GetCellType()
+  {
+    if (IsWhite()) return CellType.White;
+    if (IsBlack()) return CellType.Black;
+    return CellType.Empty;
+  }
+
+  public CellContext GetCellContext()
+  {
+    int cntW = WhiteNeighboursCount();
+    int cntB = BlackNeighboursCount();
+    return new CellContext {
+      cellType = GetCellType(),
+      cntWhite = cntW,
+      cntBlack = cntB,
+      cntAlive = cntW + cntB
+    };
   }
 
   public Cell GetCopy(Terrain terrain)
@@ -22,54 +80,50 @@ public class Cell
     return cell;
   }
 
-  public bool IsBlack() => IsAlive && Colony != null;
+  // public Cell GenerateNextCell()
+  // {
+  //   int cntBlack = BlackNeighboursCount();
+  //   int cntWhite = WhiteNeighboursCount();
+  //   Cell cell = GetCellAfterDominating(cntBlack, cntWhite);
+  //   if (cell.IsBlack())
+  //   {
+  //     if (cntBlack < 2 || cntBlack > 3)
+  //     {
+  //       cell.Kill();
+  //       cell.SetColony(null);
+  //     }
+  //     return cell;
+  //   }
+  //   if (cell.IsWhite())
+  //   {
+  //     if (cntWhite < 2 || cntWhite > 3) cell.Kill();
+  //     return cell;
+  //   }
+  //   if (cntWhite == 3) cell.MakeAlive();
+  //   return cell;
+  // }
 
-  public bool IsWhite() => IsAlive && Colony == null;
-
-  public Cell GenerateNextCell()
-  {
-    int cntBlack = BlackNeighboursCount();
-    int cntWhite = WhiteNeighboursCount();
-    Cell cell = GetCellAfterDominating(cntBlack, cntWhite);
-    if (cell.IsBlack())
-    {
-      if (cntBlack < 2 || cntBlack > 3)
-      {
-        cell.Kill();
-        cell.SetColony(null);
-      }
-      return cell;
-    }
-    if (cell.IsWhite())
-    {
-      if (cntWhite < 2 || cntWhite > 3) cell.Kill();
-      return cell;
-    }
-    if (cntWhite == 3) cell.MakeAlive();
-    return cell;
-  }
-  
-  private Cell GetCellAfterDominating(int cntBlack, int cntWhite)
-  {
-    Cell cell = new(IsAlive, _terrain, I, J);
-    if (IsBlack())
-    {
-      if (cntWhite <= cntBlack + 1)
-      {
-        cell.SetColony(Colony);
-      }
-      return cell;
-    }
-    if (IsWhite())
-    {
-      if (cntWhite + 1 < cntBlack)
-      {
-        cell.AddToNeighboursColony();
-      }
-      return cell;
-    }
-    return cell;
-  }
+  // private Cell GetCellAfterDominating(int cntBlack, int cntWhite)
+  // {
+  //   Cell cell = new(IsAlive, _terrain, I, J);
+  //   if (IsBlack())
+  //   {
+  //     if (cntWhite <= cntBlack + 1)
+  //     {
+  //       cell.SetColony(Colony);
+  //     }
+  //     return cell;
+  //   }
+  //   if (IsWhite())
+  //   {
+  //     if (cntWhite + 1 < cntBlack)
+  //     {
+  //       cell.AddToNeighboursColony();
+  //     }
+  //     return cell;
+  //   }
+  //   return cell;
+  // }
 
   public int WhiteNeighboursCount()
   {
@@ -111,6 +165,11 @@ public class Cell
   {
     Colony?.RemoveNextMember(this);
     colony?.AddNextMember(this);
+    Colony = colony;
+  }
+
+  public void SetColonyManually(Colony? colony)
+  {
     Colony = colony;
   }
 
