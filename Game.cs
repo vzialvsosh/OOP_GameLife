@@ -27,6 +27,7 @@ public class GameLife
   {
     _timer.Start();
     _terrain.Show();
+    _terrain.FormClosed += (sender, e) => Application.Exit();
     _terrain.DrawFeatures(_terrain.Controls);
     Application.Run();
   }
